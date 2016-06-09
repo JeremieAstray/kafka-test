@@ -1,5 +1,6 @@
 package com.jeremie.testObject;
 
+import com.jeremie.util.SerializeTool;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
@@ -12,15 +13,15 @@ import java.util.Properties;
 public class KafkaProducer {
 
     private final static Properties props;
-    private final static Producer<Integer, String> producer;
+    private final static Producer<Integer, byte[]> producer;
     private final static String topic;
 
     static {
         props = new Properties();
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
+        props.put("serializer.class", "kafka.serializer.DefaultEncoder");
         props.put("metadata.broker.list", "localhost:9092");
         props.put("group.id", "group1");
-        producer = new Producer<Integer, String>(new ProducerConfig(props));
+        producer = new Producer<>(new ProducerConfig(props));
         topic = "topic1";
     }
 
@@ -29,7 +30,8 @@ public class KafkaProducer {
         while (true) {
             String messageStr = "Message_" + messageNo;
             System.out.println("Send:" + messageStr);
-            producer.send(new KeyedMessage<Integer, String>(topic, messageStr));
+            Test test = new Test(messageNo, messageStr);
+            producer.send(new KeyedMessage<>(topic, SerializeTool.objectToByteArray(test)));
             messageNo++;
             try {
                 Thread.sleep(200);
