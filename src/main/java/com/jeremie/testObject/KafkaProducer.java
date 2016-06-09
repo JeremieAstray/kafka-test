@@ -22,7 +22,7 @@ public class KafkaProducer {
         props.put("metadata.broker.list", "localhost:9092");
         props.put("group.id", "group1");
         producer = new Producer<>(new ProducerConfig(props));
-        topic = "topic1";
+        topic = "kafka_object_test_topic";
     }
 
     public static void main(String[] args) {

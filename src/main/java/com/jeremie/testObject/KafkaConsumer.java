@@ -28,7 +28,7 @@ public class KafkaConsumer {
         props.put("zookeeper.sync.time.ms", "200");
         props.put("auto.commit.interval.ms", "1000");
         consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
-        topic = "topic1";
+        topic = "kafka_object_test_topic";
     }
 
     public static void main(String[] args) throws EOFException {
