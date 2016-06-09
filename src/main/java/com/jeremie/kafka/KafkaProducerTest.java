@@ -1,28 +1,26 @@
-package com.jeremie.testObject;
+package com.jeremie.kafka;
 
-import com.jeremie.util.SerializeTool;
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
 
 /**
  * @author guanhong 16/6/5 上午12:06.
  */
-public class KafkaProducer {
+public class KafkaProducerTest {
 
     private final static Properties props;
-    private final static Producer<Integer, byte[]> producer;
+    private final static KafkaProducer<Integer, String> producer;
     private final static String topic;
 
     static {
         props = new Properties();
-        props.put("serializer.class", "kafka.serializer.DefaultEncoder");
+        props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("metadata.broker.list", "localhost:9092");
         props.put("group.id", "group1");
-        producer = new Producer<>(new ProducerConfig(props));
-        topic = "kafka_object_test_topic";
+        producer = new KafkaProducer<>(props);
+        topic = "topic1";
     }
 
     public static void main(String[] args) {
@@ -30,8 +28,7 @@ public class KafkaProducer {
         while (true) {
             String messageStr = "Message_" + messageNo;
             System.out.println("Send:" + messageStr);
-            Test test = new Test(messageNo, messageStr);
-            producer.send(new KeyedMessage<>(topic, SerializeTool.objectToByteArray(test)));
+            producer.send(new ProducerRecord<>(topic, messageStr));
             messageNo++;
             try {
                 Thread.sleep(200);
