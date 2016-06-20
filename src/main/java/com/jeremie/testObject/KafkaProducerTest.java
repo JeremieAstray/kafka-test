@@ -18,7 +18,10 @@ public class KafkaProducerTest {
     static {
         props = new Properties();
         props.put("serializer.class", "kafka.serializer.DefaultEncoder");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
         props.put("metadata.broker.list", "localhost:9092");
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("group.id", "group1");
         producer = new KafkaProducer<>(props);
         topic = "kafka_object_test_topic";
@@ -28,9 +31,12 @@ public class KafkaProducerTest {
         int messageNo = 1;
         while (true) {
             String messageStr = "Message_" + messageNo;
-            System.out.println("Send:" + messageStr);
             Test test = new Test(messageNo, messageStr);
-            producer.send(new ProducerRecord<>(topic, SerializeTool.objectToByteArray(test)));
+            producer.send(new ProducerRecord<>(topic, SerializeTool.objectToByteArray(test)), ((recordMetadata, e) -> {
+                if (e == null) {
+                    System.out.println(messageStr + " has been sended!");
+                }
+            }));
             messageNo++;
             try {
                 Thread.sleep(200);

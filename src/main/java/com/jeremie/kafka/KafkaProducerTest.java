@@ -17,7 +17,10 @@ public class KafkaProducerTest {
     static {
         props = new Properties();
         props.put("serializer.class", "kafka.serializer.StringEncoder");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("metadata.broker.list", "localhost:9092");
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("group.id", "group1");
         producer = new KafkaProducer<>(props);
         topic = "topic1";
